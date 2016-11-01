@@ -12,9 +12,12 @@ Given a pre-trained keras model, this repo can visualize features of specified l
 
 ## Examples
 Below is several examples of feature visualization based on pre-trained VGG16 in keras, 'max' means pick the greates activation in the feature map to be visualized and set other elements to zeros, 'all' mean use all values in the feature map to visualize.
-* Original Image
-  ![husky](https://raw.githubusercontent.com/Jallet/Deconvnet-keras/master/results/husky.jpg)
-* block3_conv3_128
+* Original Image 
+  ![husky](https://raw.githubusercontent.com/Jallet/Deconvnet-keras/master/husky.jpg)
+* block3_conv3_128<p align="center">
+<img height =140 src="results/block3_conv3_128_max.png"> &nbsp; &nbsp; &nbsp; &nbsp; <img width=350 src="results/block3_conv3_128_all.png">
+</p>
+
   * max <br />
   ![block3_conv3_128_max](https://raw.githubusercontent.com/Jallet/Deconvnet-keras/master/results/block3_conv3_128_max.png)
   * all <br />
@@ -22,19 +25,21 @@ Below is several examples of feature visualization based on pre-trained VGG16 in
 * block4_conv2_46
   * max <br />
   ![block4_conv2_46_max](https://raw.githubusercontent.com/Jallet/Deconvnet-keras/master/results/block4_conv2_46_max.png)
+  block4_conv2_46 extract the 'nose' feature
   * all <br />
   ![block4_conv2_46_all](https://raw.githubusercontent.com/Jallet/Deconvnet-keras/master/results/block4_conv2_46_all.png)
 * block5_conv3_256
-  * max <br />
+ * max <br />
   ![block5_conv3_256_max](https://raw.githubusercontent.com/Jallet/Deconvnet-keras/master/results/block5_conv3_256_max.png)
+  block5_conv3_256 extract the 'ear' feature
   * all <br />
   ![block5_conv3_256_all](https://raw.githubusercontent.com/Jallet/Deconvnet-keras/master/results/block5_conv3_256_all.png)
 * fc1_0 <br />
 ![fc1_0_all](https://raw.githubusercontent.com/Jallet/Deconvnet-keras/master/results/fc1_0_all.png)
 * fc2_248 <br />
 ![fc2_248_max](https://raw.githubusercontent.com/Jallet/Deconvnet-keras/master/results/fc2_248_max.png)
-* predictions_248 <br />
-predictions_248 is the predicted class of the image(label: Eskimo_dog)
+* predictions_248 
+predictions_248 is the predicted class of the image(label: Eskimo_dog)<br />
 ![predictions_248_max](https://raw.githubusercontent.com/Jallet/Deconvnet-keras/master/results/predictions_248_max.png)
 
 ## Shortage
