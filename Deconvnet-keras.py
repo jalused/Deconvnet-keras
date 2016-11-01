@@ -517,7 +517,7 @@ def main():
     deconv = deconv[:, :, ::-1]
     uint8_deconv = (deconv * 255).astype(np.uint8)
     img = Image.fromarray(uint8_deconv, 'RGB')
-    img.save('{}_{}_{}.png'.format(layer_name, feature_to_visualize, visualize_mode))
+    img.save('results/{}_{}_{}.png'.format(layer_name, feature_to_visualize, visualize_mode))
 
 if "__main__" == __name__:
     main()
