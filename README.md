@@ -8,10 +8,11 @@ Given a pre-trained keras model, this repo can visualize features of specified l
 * [Keras](https://github.com/fchollet/keras) 1.1
 * Python >= 2.7
 * argparse 1.0
-* PIL 1.1
+* Pillow 1.1
 
 ## Examples
-Below is several examples of feature visualization based on pre-trained VGG16 in keras, 'max' means pick the greates activation in the feature map to be visualized and set other elements to zeros, 'all' mean use all values in the feature map to visualize.
+Below is several examples of feature visualization based on pre-trained VGG16 in keras, 'max' means pick the greates activation in the feature map to be visualized and set other elements to zeros, 'all' mean use all values in the feature map to visualize. <br />
+The left is max activation feature, the right is all activation feature
 
 * Original Image <p align="center">
 <img height =224 src="husky.jpg">
