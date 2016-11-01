@@ -28,7 +28,6 @@ from keras.applications import vgg16, imagenet_utils
 import keras.backend as K
 
 
-
 class DConvolution2D(object):
     def __init__(self, layer):
         self.layer = layer
@@ -181,15 +180,19 @@ class DActivation(object):
         input = K.placeholder(shape = layer.output_shape)
 
         output = self.activation(input)
+        # According to the original paper, 
+        # In forward pass and backward pass, do the same activation(relu)
         self.up_func = K.function(
                 [input, K.learning_phase()], output)
         self.down_func = K.function(
                 [input, K.learning_phase()], output)
 
+    # Compute activation in forward pass
     def up(self, data, learning_phase = 0):
         self.up_data = self.up_func([data, learning_phase])
         return self.up_data
 
+    # Compute activation in backward pass
     def down(self, data, learning_phase = 0):
         self.down_data = self.down_func([data, learning_phase])
         return self.down_data
@@ -202,10 +205,12 @@ class DFlatten(object):
         self.up_func = K.function(
                 [layer.input, K.learning_phase()], layer.output)
 
+    # Flatten 2D input into 1D output
     def up(self, data, learning_phase = 0):
         self.up_data = self.up_func([data, learning_phase])
         return self.up_data
 
+    # Reshape 1D input into 2D output
     def down(self, data, learning_phase = 0):
         # print(self.shape)
         # print(data.shape[1:])
@@ -219,6 +224,7 @@ class DInput(object):
     def __init__(self, layer):
         self.layer = layer
     
+    # input and output of Inputl layer are the same
     def up(self, data, learning_phase = 0):
         self.up_data = data
         return self.up_data
