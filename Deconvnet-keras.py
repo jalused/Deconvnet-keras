@@ -13,7 +13,6 @@ import numpy as np
 import sys
 import time
 from PIL import Image
-from matplotlib import pyplot as plt
 from keras.layers import (
         Input,
         InputLayer,
