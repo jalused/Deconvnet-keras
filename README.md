@@ -22,11 +22,15 @@ The left is max activation feature, the right is all activation feature
 <img height =224 src="results/block3_conv3_128_max.png" title = "max"> &nbsp; &nbsp; &nbsp; &nbsp; <img width=224 src="results/block3_conv3_128_all.png" title = "all">
 </p>
 
-* block4_conv2_46<p align="center">
+* block4_conv2_46
+
+The 46th feature in block4_conv2 layer catch 'nose' feature<p align="center">
 <img height =224 src="results/block4_conv2_46_max.png" title = "max"> &nbsp; &nbsp; &nbsp; &nbsp; <img width=224 src="results/block4_conv2_46_all.png" title = "all">
 </p>
 
-* block5_conv3_256<p align="center">
+* block5_conv3_256
+
+The 256th feature in block5_conv3 layer catch 'ear' feature<p align="center">
 <img height =224 src="results/block5_conv3_256_max.png" title = "max"> &nbsp; &nbsp; &nbsp; &nbsp; <img width=224 src="results/block5_conv3_256_all.png" title = "all">
 </p>
 
