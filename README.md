@@ -12,20 +12,21 @@ Given a pre-trained keras model, this repo can visualize features of specified l
 
 ## Examples
 Below is several examples of feature visualization based on pre-trained VGG16 in keras, 'max' means pick the greates activation in the feature map to be visualized and set other elements to zeros, 'all' mean use all values in the feature map to visualize.
+
 * Original Image <p align="center">
 <img height =224 src="husky.jpg">
 </p>
-  ![husky](https://raw.githubusercontent.com/Jallet/Deconvnet-keras/master/husky.jpg)
+
 * block3_conv3_128<p align="center">
-<img height =224 src="results/block3_conv3_128_max.png"> &nbsp; &nbsp; &nbsp; &nbsp; <img width=224 src="results/block3_conv3_128_all.png">
+<img height =224 src="results/block3_conv3_128_max.png" title = "max"> &nbsp; &nbsp; &nbsp; &nbsp; <img width=224 src="results/block3_conv3_128_all.png" title = "all">
 </p>
 
 * block4_conv2_46<p align="center">
-<img height =224 src="results/block4_conv2_46_max.png"> &nbsp; &nbsp; &nbsp; &nbsp; <img width=224 src="results/block4_conv2_46_all.png">
+<img height =224 src="results/block4_conv2_46_max.png" title = "max"> &nbsp; &nbsp; &nbsp; &nbsp; <img width=224 src="results/block4_conv2_46_all.png" title = "all">
 </p>
 
 * block5_conv3_256<p align="center">
-<img height =224 src="results/block5_conv3_256_max.png"> &nbsp; &nbsp; &nbsp; &nbsp; <img width=224 src="results/block5_conv3_256_all.png">
+<img height =224 src="results/block5_conv3_256_max.png" title = "max"> &nbsp; &nbsp; &nbsp; &nbsp; <img width=224 src="results/block5_conv3_256_all.png" title = "all">
 </p>
 
 * fc1_0 <p align="center">
@@ -37,6 +38,7 @@ Below is several examples of feature visualization based on pre-trained VGG16 in
 </p>
 
 * predictions_248 
+
 predictions_248 is the predicted class of the image(label: Eskimo_dog) <p align="center">
 <img height =224 src="results/predictions_248_max.png">
 </p>
