@@ -13,28 +13,23 @@ import numpy as np
 import sys
 import time
 from PIL import Image
+from matplotlib import pyplot as plt
 from keras.layers import (
         Input,
         InputLayer,
-        Activation,
-        Embedding,
         Flatten,
-        Dense
-        )
-from matplotlib import pyplot as plt
+        Dense)
 from keras.layers.convolutional import (
         Convolution2D,
-        MaxPooling2D
-        )
+        MaxPooling2D)
 from keras.activations import *
 from keras.models import Model, Sequential
 from keras.applications import vgg16, imagenet_utils
 import keras.backend as K
 
-from theano import *
 
 
-class Conv2D(object):
+class DConvolution2D(object):
     def __init__(self, layer):
         self.layer = layer
 
@@ -42,7 +37,7 @@ class Conv2D(object):
         W = weights[0]
         b = weights[1]
 
-        # Set up_func for Conv2D
+        # Set up_func for DConvolution2D
         nb_up_filter = W.shape[0]
         nb_up_row = W.shape[2]
         nb_up_col = W.shape[3]
@@ -57,7 +52,7 @@ class Conv2D(object):
         self.up_func = K.function([input, K.learning_phase()], output)
 
         # Flip W horizontally and vertically, 
-        # and set down_func for Conv2D
+        # and set down_func for DConvolution2D
         W = np.transpose(W, (1, 0, 2, 3))
         W = W[:, :, ::-1, ::-1]
         nb_down_filter = W.shape[0]
@@ -85,27 +80,27 @@ class Conv2D(object):
         return self.down_data
     
 
-class Den(object):
+class DDense(object):
     def __init__(self, layer):
         self.layer = layer
         weights = layer.get_weights()
         W = weights[0]
         b = weights[1]
         
-        #Set up_func for Den
+        #Set up_func for DDense
         input = Input(shape = layer.input_shape[1:])
-        output = Dense(output_dim = layer.output_shape[1],
+        output = DDensese(output_dim = layer.output_shape[1],
                 weights = [W, b])(input)
         self.up_func = K.function([input, K.learning_phase()], output)
         
-        #Transpose W and set down_func for Den
+        #Transpose W and set down_func for DDense
         W = W.transpose()
         self.input_shape = layer.input_shape
         self.output_shape = layer.output_shape
         b = np.zeros(self.input_shape[1])
         flipped_weights = [W, b]
         input = Input(shape = self.output_shape[1:])
-        output = Dense(
+        output = DDensese(
                 output_dim = self.input_shape[1], 
                 weights = flipped_weights)(input)
         self.down_func = K.function([input, K.learning_phase()], output)
@@ -122,7 +117,7 @@ class Den(object):
         self.down_data = self.down_func([data, learning_phase])
         return self.down_data
 
-class Pool(object):
+class DPooling(object):
     def __init__(self, layer):
         self.layer = layer
         self.poolsize = layer.pool_size
@@ -178,7 +173,7 @@ class Pool(object):
         return unpooled
 
 
-class Act(object):
+class DActivation(object):
     def __init__(self, layer, linear = False):
         self.layer = layer
         self.linear = linear
@@ -200,7 +195,7 @@ class Act(object):
         return self.down_data
     
     
-class Flat(object):
+class DFlatten(object):
     def __init__(self, layer):
         self.layer = layer
         self.shape = layer.input_shape[1:]
@@ -220,7 +215,7 @@ class Flat(object):
         self.down_data = np.reshape(data, new_shape)
         return self.down_data
 
-class In(object):
+class DInput(object):
     def __init__(self, layer):
         self.layer = layer
     
@@ -252,19 +247,19 @@ def main():
     layer_index = 4
     for i in range(len(model.layers)):
         if isinstance(model.layers[i], Convolution2D):
-            deconv_layers.append(Conv2D(model.layers[i]))
+            deconv_layers.append(DConvolution2D(model.layers[i]))
             deconv_layers.append(
-                    Act(model.layers[i], linear= linear_activation))
+                    DActivation(model.layers[i], linear= linear_activation))
         elif isinstance(model.layers[i], MaxPooling2D):
-            deconv_layers.append(Pool(model.layers[i]))
+            deconv_layers.append(DPooling(model.layers[i]))
         elif isinstance(model.layers[i], Dense):
-            deconv_layers.append(Den(model.layers[i]))
+            deconv_layers.append(DDense(model.layers[i]))
             deconv_layers.append(
-                    Act(model.layers[i], linear = linear_activation))
+                    DActivation(model.layers[i], linear = linear_activation))
         elif isinstance(model.layers[i], Flatten):
-            deconv_layers.append(Flat(model.layers[i]))
+            deconv_layers.append(DFlatten(model.layers[i]))
         elif isinstance(model.layers[i], InputLayer):
-            deconv_layers.append(In(model.layers[i]))
+            deconv_layers.append(DInput(model.layers[i]))
         else:
             print(model.layers[i].get_config())
         if layer_name == model.layers[i].name:
