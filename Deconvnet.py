@@ -88,7 +88,7 @@ class DDense(object):
         
         #Set up_func for DDense
         input = Input(shape = layer.input_shape[1:])
-        output = DDensese(output_dim = layer.output_shape[1],
+        output = Dense(output_dim = layer.output_shape[1],
                 weights = [W, b])(input)
         self.up_func = K.function([input, K.learning_phase()], output)
         
@@ -99,7 +99,7 @@ class DDense(object):
         b = np.zeros(self.input_shape[1])
         flipped_weights = [W, b]
         input = Input(shape = self.output_shape[1:])
-        output = DDensese(
+        output = Dense(
                 output_dim = self.input_shape[1], 
                 weights = flipped_weights)(input)
         self.down_func = K.function([input, K.learning_phase()], output)
@@ -166,7 +166,6 @@ class DPooling(object):
     def __max_unpooling_with_switch(self, input, switch):
         tile = np.ones((switch.shape[2] / input.shape[2], 
             switch.shape[3] / input.shape[3]))
-        # print('tile: ', tile)
         out = np.kron(input, tile)
         unpooled = out * switch
         return unpooled
@@ -212,10 +211,7 @@ class DFlatten(object):
 
     # Reshape 1D input into 2D output
     def down(self, data, learning_phase = 0):
-        # print(self.shape)
-        # print(data.shape[1:])
         new_shape = [data.shape[0]] + list(self.shape)
-        # print('new_shape: ', new_shape)
         assert np.prod(self.shape) == np.prod(data.shape[1:])
         self.down_data = np.reshape(data, new_shape)
         return self.down_data
@@ -235,6 +231,7 @@ class DInput(object):
     
 def visualize(model, data, layer_name, feature_to_visualize, visualize_mode):
     deconv_layers = []
+    # Stack layers
     for i in range(len(model.layers)):
         if isinstance(model.layers[i], Convolution2D):
             deconv_layers.append(DConvolution2D(model.layers[i]))
@@ -251,21 +248,18 @@ def visualize(model, data, layer_name, feature_to_visualize, visualize_mode):
         elif isinstance(model.layers[i], InputLayer):
             deconv_layers.append(DInput(model.layers[i]))
         else:
+            print('Cannot handle this type of layer')
             print(model.layers[i].get_config())
+            sys.exit()
         if layer_name == model.layers[i].name:
             break
-    
 
+    # Forward pass
     deconv_layers[0].up(data)
-    
     for i in range(1, len(deconv_layers)):
         deconv_layers[i].up(deconv_layers[i - 1].up_data)
 
     output = deconv_layers[-1].up_data
-    print('shape of output', output.shape)
-    print('max of output: ', output.max())
-    print('min of output: ', output.min())
-
     assert output.ndim == 2 or output.ndim == 4
     if output.ndim == 2:
         feature_map = output[:, feature_to_visualize]
@@ -284,10 +278,10 @@ def visualize(model, data, layer_name, feature_to_visualize, visualize_mode):
     else:
         output[:, feature_to_visualize, :, :] = feature_map
 
+    # Backward pass
     deconv_layers[-1].down(output)
     for i in range(len(deconv_layers) - 2, -1, -1):
         deconv_layers[i].down(deconv_layers[i + 1].down_data)
-    
     deconv = deconv_layers[0].down_data
     deconv = deconv.squeeze()
     
@@ -296,48 +290,57 @@ def visualize(model, data, layer_name, feature_to_visualize, visualize_mode):
     
 def argparser():
     parser = argparse.ArgumentParser()
+    parser.add_argument('image', help = 'Path of image to visualize')
+    parser.add_argument('--layer_name', '-l', 
+            action = 'store', dest = 'layer_name', 
+            default = 'block5_conv3', help = 'Layer to visualize')
+    parser.add_argument('--feature', '-f', 
+            action = 'store', dest = 'feature', 
+            default = 0, type = int, help = 'Feature to visualize')
+    parser.add_argument('--mode', '-m', action = 'store', dest = 'mode', 
+            choices = ['max', 'all'], default = 'max', 
+            help = 'Visualize mode, \'max\' mode will pick the greatest \
+                    activation in the feature map and set others to zero, \
+                    \'all\' mode will use all values in the feature map')
     return parser
 
 def main():
     parser = argparser()
     args = parser.parse_args()
-    np.random.seed(1000)
+    image_path = args.image
+    layer_name = args.layer_name
+    feature_to_visualize = args.feature
+    visualize_mode = args.mode
+
     model = vgg16.VGG16(weights = 'imagenet', include_top = True)
     layer_dict = dict([(layer.name, layer) for layer in model.layers])
+    if not layer_dict.has_key(layer_name):
+        print('Wrong layer name')
+        sys.exit()
 
-    img = Image.open('./husky.jpg')
+    # Load data and preprocess
+    img = Image.open(image_path)
     img_array = np.array(img)
     img_array = np.transpose(img_array, (2, 0, 1))
     img_array = img_array[np.newaxis, :]
     img_array = img_array.astype(np.float)
     img_array = imagenet_utils.preprocess_input(img_array)
     
-
-    layer_name = 'block5_conv3'
-    feature_to_visualize = 99
-    visualize_mode = 'max'
-    
     deconv = visualize(model, img_array, 
             layer_name, feature_to_visualize, visualize_mode)
-
+    
+    # postprocess and save image
     deconv = np.transpose(deconv, (1, 2, 0))
-    print('shape of deconv: ', deconv.shape)
-    print('max of deconv: ', deconv.max())
-    print('min of deconv: ', deconv.min())
-    # sys.exit()
     deconv = deconv - deconv.min()
     deconv *= 1.0 / (deconv.max() + 1e-8)
     deconv = deconv[:, :, ::-1]
-    # deconv = deconv.astype(np.uint8)
     print('shape of deconv: ', deconv.shape)
     print('dtype of deconv: ', deconv.dtype)
     print('max of deconv: ', deconv.max())
     print('min of deconv: ', deconv.min())
     uint8_deconv = (deconv * 255).astype(np.uint8)
     img = Image.fromarray(uint8_deconv, 'RGB')
-    img.save('husky_{}_{}_feature.png'.format(layer_name, feature_to_visualize))
-    plt.imshow(deconv)
-    plt.show()
+    img.save('{}_{}_{}.png'.format(layer_name, feature_to_visualize, visualize_mode))
 
 if "__main__" == __name__:
     main()
