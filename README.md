@@ -15,7 +15,7 @@ Below is several examples of feature visualization based on pre-trained VGG16 in
 * Original Image 
   ![husky](https://raw.githubusercontent.com/Jallet/Deconvnet-keras/master/husky.jpg)
 * block3_conv3_128<p align="center">
-<img height =140 src="results/block3_conv3_128_max.png"> &nbsp; &nbsp; &nbsp; &nbsp; <img width=350 src="results/block3_conv3_128_all.png">
+<img height =224 src="results/block3_conv3_128_max.png"> &nbsp; &nbsp; &nbsp; &nbsp; <img width=224 src="results/block3_conv3_128_all.png">
 </p>
 
   * max <br />
