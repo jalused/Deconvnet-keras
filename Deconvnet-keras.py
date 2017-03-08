@@ -503,6 +503,7 @@ def main():
 
     # Load data and preprocess
     img = Image.open(image_path)
+    img = img.resize(224, 224)
     img_array = np.array(img)
     img_array = np.transpose(img_array, (2, 0, 1))
     img_array = img_array[np.newaxis, :]
