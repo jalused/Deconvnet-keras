@@ -5,7 +5,7 @@ This is a implementation of Deconvnet in keras, following Matthew D.Zeiler's pap
 Given a pre-trained keras model, this repo can visualize features of specified layer including dense layer.  
 
 ## Dependencies
-* [Keras](https://github.com/fchollet/keras) 1.1
+* [Keras](https://github.com/fchollet/keras) 1.1(Theano Backend)
 * Python >= 2.7
 * argparse 1.0
 * Pillow 1.1
